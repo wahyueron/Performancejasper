@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl">
+  <name> New Data Adapter 1</name>
+  <driver>org.postgresql.Driver</driver>
+  <username>patra1522</username>
+  <password>71d5a318ef858c63775b473cdc17b4ebe</password>
+  <url>jdbc:postgresql://124.158.146.123:9893/new_hr-dev</url>
+  <database></database>
+  <savePassword>true</savePassword>
+  <serverAddress></serverAddress>
+</jdbcDataAdapter>

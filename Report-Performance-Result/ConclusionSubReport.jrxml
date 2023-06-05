@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.3.final using JasperReports Library version 6.20.3-415f9428cffdb6805c6f85bbb29ebaf18813a2ab  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ConclusionSubReport" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="575740f9-9474-42af-bb3d-fff11471f9d9">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PerformanceResultAssessment.jrdax"/>
+	<property name="net.sf.jasperreports.export.pdf.margin.top" value="20"/>
+	<property name="net.sf.jasperreports.export.pdf.margin.bottom" value="20"/>
+	<property name="net.sf.jasperreports.export.pdf.margin.left" value="20"/>
+	<property name="net.sf.jasperreports.export.pdf.margin.right" value="20"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="targetId" class="java.lang.String">
+		<parameterDescription><![CDATA[This is Parameter for Target]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT *  FROM pat001.per_assessment_answers paa 
+JOIN pat001.per_assessment_target_assessors pata2 ON paa.assessment_target_assessor_id =pata2.id 
+WHERE pata2.target_id = $P{targetId}]]>
+	</queryString>
+	<field name="id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="assessment_target_assessor_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assessment_target_assessor_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="assessment_target_assessor_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="individual_desc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="individual_desc"/>
+		<property name="com.jaspersoft.studio.field.label" value="individual_desc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="positive_profile" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="positive_profile"/>
+		<property name="com.jaspersoft.studio.field.label" value="positive_profile"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="development_area" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="development_area"/>
+		<property name="com.jaspersoft.studio.field.label" value="development_area"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="mandiri" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="mandiri"/>
+		<property name="com.jaspersoft.studio.field.label" value="mandiri"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="penugasan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="penugasan"/>
+		<property name="com.jaspersoft.studio.field.label" value="penugasan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="pelatihan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pelatihan"/>
+		<property name="com.jaspersoft.studio.field.label" value="pelatihan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="created_by" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="created_by"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_by"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="created_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="updated_by" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="updated_by"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_by"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="updated_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="version" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="version"/>
+		<property name="com.jaspersoft.studio.field.label" value="version"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<field name="COLUMN_14" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="assessment_period_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assessment_period_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="assessment_period_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="target_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="target_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="target_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="assessor_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assessor_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="assessor_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="assess_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assess_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="assess_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="COLUMN_20" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="created_by"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_by"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="COLUMN_21" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="COLUMN_22" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="updated_by"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_by"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="COLUMN_23" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="COLUMN_24" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="version"/>
+		<property name="com.jaspersoft.studio.field.label" value="version"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<staticText>
+				<reportElement x="160" y="39" width="240" height="41" forecolor="#5C7CE6" uuid="929a1f0f-fa24-4b70-a80d-e584a06c5061"/>
+				<textElement textAlignment="Center">
+					<font size="22" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[III.Conclusion]]></text>
+			</staticText>
+			<image hAlign="Left">
+				<reportElement x="-10" y="-10" width="190" height="60" uuid="9d77b2ea-2659-4093-bed6-8337d9993272"/>
+				<imageExpression><![CDATA["https://github.com/wahyueron/gambar/blob/main/PT_Famili_Mitra_Ekselen__FAME_Consultant___1_-removebg-preview.png?raw=true"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="43" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="4" width="278" height="39" forecolor="#FFFFFF" backcolor="#0464B4" uuid="9e782d25-e5ea-40bc-a462-9d26db81f1d0"/>
+				<box padding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Profil Positif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="279" y="4" width="278" height="39" forecolor="#FFFFFF" backcolor="#0464B4" uuid="29ca2a4e-8092-4411-96fd-c5b277091d82"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Area Pengembangan]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="58" splitType="Stretch">
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="1" y="1" width="278" height="39" backcolor="#E0EEF8" uuid="3700db76-7524-4a80-afde-16bde032f489"/>
+				<box topPadding="5" bottomPadding="5">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement markup="html">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{positive_profile}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="279" y="0" width="278" height="40" backcolor="#E0EEF8" uuid="b2cea46f-7b8d-4064-bcad-145e143a9c73"/>
+				<box topPadding="5" bottomPadding="5">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement markup="html">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{development_area}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="150" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="120" width="239" height="30" backcolor="#DEDEDE" uuid="6e371daf-b8eb-4199-9da5-8daa8efb7cd5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e85dfb48-e7d3-423b-956a-281ec8c9e2cc"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="10" bottomPadding="1" rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[PELATIHAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="90" width="239" height="30" backcolor="#E3E3E3" uuid="c09c0e9b-1aca-4c3e-847f-ae8a5168fe0e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="24ca7b89-d80b-4d07-8ad8-720c901ff2c1"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="10" bottomPadding="1" rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[PENUGASAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="60" width="239" height="30" backcolor="#EDEDED" uuid="96a8056a-5b1b-4b5b-b552-3c33fbb1c198">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="835165ad-2c98-41d0-93f6-d813a3d5ca42"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="10" bottomPadding="1" rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[MANDIRI]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="241" y="60" width="316" height="30" backcolor="#EDEDED" uuid="0f31b0a9-0191-4c86-80bd-8c693d83a214">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c52ecded-1571-4089-b432-480aa118c809"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="10" bottomPadding="1" rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mandiri}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="240" y="90" width="317" height="30" backcolor="#E3E3E3" uuid="3f89a407-9886-47b7-b1ca-773f7fca0628">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1bc88146-4d28-4851-a9f6-b9cf360f7ae7"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="10" bottomPadding="1" rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{penugasan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="240" y="120" width="316" height="30" backcolor="#DEDEDE" uuid="13f179b3-555e-4862-83e4-ab3297f8d203">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="58ebe579-7f64-4a0b-b419-93d3dda7f04a"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="10" bottomPadding="1" rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pelatihan}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="107" y="10" width="340" height="41" forecolor="#5C7CE6" uuid="ce97f55c-d966-4795-ab5b-90eefd2d875e"/>
+				<textElement textAlignment="Center">
+					<font size="22" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[IV.Saran Pengembangan]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

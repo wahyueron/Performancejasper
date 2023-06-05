@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.3.final using JasperReports Library version 6.20.3-415f9428cffdb6805c6f85bbb29ebaf18813a2ab  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Performance_result_Assessment_A4" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="93c51e99-c71a-48cc-9f63-9779ea29fb29">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PerformanceResultAssessment.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="633"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="353"/>
+	<parameter name="targetId" class="java.lang.String">
+		<parameterDescription><![CDATA[This is target Id for filtering]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 
+cvse_t.nik nik_target, 
+cvse_t."name" target_name, 
+cvse_t.position_id position_target_id,  
+cvse_t.position_name position_target_name,  
+cvse_t.unit_id unit_target_id,  
+cvse_t.unit_name unit_target_name, 
+cvse_a.nik nik_assessor, cvse_a."name" assessor_name,  
+cvse_a.position_id position_assessor_id,  
+cvse_a.position_name position_assessor_name,  
+cvse_a.unit_id unit_assessor_id,  
+cvse_a.unit_name unit_assessor_name, 
+pvel.birth_date, 
+pata.status,  
+pata.assess_status, 
+pap.assessment_start_date time_assessment, 
+(SELECT sum(rating) AS total_of_competency_by_position FROM ( 
+SELECT  
+pata.id,  
+cc.id competency_id, cc."name" competency_name, cc.description competency_description, 
+ccb.behaviour competency_behaviour, COALESCE(clrpd.rating_target,0) AS rating 
+FROM pat001.per_assessment_target_assessors pata  
+JOIN pat001.per_assessment_target_assessor_details patd ON pata.id = patd.target_assessor_id   
+JOIN pat001.cmp_competencies cc ON cc.id = patd.competency_id  
+JOIN pat001.cmp_competencies_behaviour ccb ON ccb.comp_id = cc.id  
+JOIN pat001.cor_v_simple_employees cvse ON cvse.id = pata.target_id  
+LEFT JOIN pat001.cmp_level_rate_positions clrp ON clrp.position_id = cvse.position_id  
+LEFT JOIN pat001.cmp_level_rate_position_details clrpd ON clrpd.level_rate_id = clrp.id AND cc.id = clrpd.competency_id  
+WHERE pata.target_id = $P{targetId} 
+) tr) AS total_of_competency_by_position, 
+COALESCE( 
+(SELECT total_of_competency_assessment FROM( 
+SELECT 
+patd.id, COALESCE(sum(ccp.rating),0) total_of_competency_assessment 
+FROM pat001.per_assessment_target_assessors pata  
+JOIN pat001.per_assessment_target_assessor_details patd ON pata.id = patd.target_assessor_id 
+JOIN pat001.per_assessment_target_assessor_detail_answers patada ON patada.target_assessor_detail_id = patd.id 
+JOIN pat001.cmp_competencies_proficiency ccp ON ccp.id = patada.proficiency_id 
+WHERE pata.target_id = $P{targetId}
+GROUP BY patd.id 
+) toca) 
+,0) AS total_of_competency_assessment, cvse_t.file_photo target_file_foto 
+FROM pat001.per_assessment_target_assessors pata  
+JOIN pat001.cor_v_simple_employees cvse_t ON pata.target_id = cvse_t.id  
+JOIN pat001.cor_v_simple_employees cvse_a ON pata.assessor_id = cvse_a.id
+JOIN pat001.per_v_employee_lov pvel ON pata.target_id = pvel.id 
+LEFT JOIN pat001.per_lovs pl_assessment_status ON pl_assessment_status.id = pata.assess_status  
+LEFT JOIN pat001.per_lovs pl_status ON pl_status.id = pata.status  
+LEFT JOIN pat001.per_assessment_periods pap ON pata.assessment_period_id = pap.id 
+WHERE pata.target_id =  $P{targetId}]]>
+	</queryString>
+	<field name="nik_target" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nik_target"/>
+		<property name="com.jaspersoft.studio.field.label" value="nik_target"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="target_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="target_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="target_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="position_target_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="position_target_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="position_target_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="position_target_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="position_target_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="position_target_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="unit_target_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="unit_target_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="unit_target_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="unit_target_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="unit_target_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="unit_target_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="nik_assessor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nik_assessor"/>
+		<property name="com.jaspersoft.studio.field.label" value="nik_assessor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="assessor_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assessor_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="assessor_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="position_assessor_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="position_assessor_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="position_assessor_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="position_assessor_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="position_assessor_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="position_assessor_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="unit_assessor_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="unit_assessor_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="unit_assessor_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="unit_assessor_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="unit_assessor_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="unit_assessor_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<field name="birth_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="birth_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="birth_date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_v_employee_lov"/>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="assess_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assess_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="assess_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="time_assessment" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="time_assessment"/>
+		<property name="com.jaspersoft.studio.field.label" value="time_assessment"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_periods"/>
+	</field>
+	<field name="total_of_competency_by_position" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_of_competency_by_position"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_of_competency_by_position"/>
+	</field>
+	<field name="total_of_competency_assessment" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="total_of_competency_assessment"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_of_competency_assessment"/>
+	</field>
+	<field name="target_file_foto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="target_file_foto"/>
+		<property name="com.jaspersoft.studio.field.label" value="target_file_foto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cor_v_simple_employees"/>
+	</field>
+	<background>
+		<band height="802" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="802" uuid="31559626-ff4e-4eb7-84f4-f06fb64b33e5"/>
+				<image>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="802" uuid="dd57a049-fa5a-4e7e-bd5b-bd213f175baa"/>
+					<box padding="0"/>
+					<imageExpression><![CDATA["https://github.com/wahyueron/gambar/blob/main/bar/1.%20Abdul%20Khoir-background.png?raw=true"]]></imageExpression>
+				</image>
+			</frame>
+		</band>
+	</background>
+	<title>
+		<band height="81" splitType="Stretch">
+			<image>
+				<reportElement x="380" y="22" width="171" height="41" uuid="5e554c41-de8d-49c2-a8a5-d738abf87dcb"/>
+				<imageExpression><![CDATA["https://github.com/wahyueron/gambar/blob/main/bar/image-removebg-preview.png?raw=true"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="132" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<staticText>
+				<reportElement x="30" y="40" width="231" height="41" forecolor="#595252" uuid="38d5ae67-0139-4110-a616-51de34f79a9a"/>
+				<textElement textAlignment="Left" markup="html">
+					<font size="29" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[LAPORAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="91" width="300" height="41" forecolor="#5C7CE6" uuid="41259681-1b1d-4b07-a48c-67b6799b4211"/>
+				<textElement textAlignment="Left" markup="html">
+					<font size="29" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[HASIL ASSESSMENT]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="225" splitType="Stretch">
+			<staticText>
+				<reportElement x="31" y="30" width="210" height="26" uuid="32bf5960-88d8-442b-aef6-9a848df0f750"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Nama				:
+
+
+
+
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="246" y="30" width="230" height="25" uuid="102aa27b-40c1-4b07-8d1b-4ce3dd99d54f"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{target_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="247" y="71" width="230" height="22" uuid="9b7bf2d8-e8dd-4adf-a4f4-1451a2c0b43d"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{birth_date}.toString()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="249" y="169" width="230" height="24" uuid="abe29d50-31e2-4aae-b0a5-3778dd9db8f7"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{position_target_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="30" y="100" width="210" height="26" uuid="c7ae9c7f-8cf8-45b1-a727-7d5df0bf84e1"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Pendidikan		                   :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="29" y="135" width="210" height="26" uuid="2c628bd5-b072-473c-86dc-b02a0ccbf000"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Tujuan Asesmen		 :
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="167" width="218" height="26" uuid="64a3972b-799e-4c82-8efc-a9fde02d87fe"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Level Asesmen			 :
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="29" y="69" width="210" height="26" uuid="4ad70f8a-04a8-4aab-9f87-82d48047babd"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Tanggal Lahir			 :
+
+
+
+
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="29" y="198" width="210" height="26" uuid="02b09a44-bc4d-41e4-8aee-d64624546d69"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Tgl. Pemeriksaan		 :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="248" y="200" width="268" height="25" uuid="41324b71-7a6b-4f5e-b6bd-8573cc18fa88"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{time_assessment}.toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="66" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="77" splitType="Stretch">
+			<image hAlign="Center">
+				<reportElement x="-20" y="4" width="595" height="73" uuid="b1ae5d91-6d41-4b02-bdf1-41e9ced0cb0d"/>
+				<imageExpression><![CDATA["https://github.com/wahyueron/gambar/blob/main/bar/PT%20Famili%20Mitra%20Ekselen%20(FAME%20Consultant).png?raw=true"]]></imageExpression>
+			</image>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="130" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<staticText>
+				<reportElement x="37" y="0" width="480" height="61" uuid="94f10ede-81a3-4574-b703-effb82eec57b"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Laporan ini dibuat berdasarkan metode Online Assessment Center dengan menggunakan
+Alat Tes Psikometri, Self Report Inventory, Simulasi, dan Behavioral Event Interview (BEI).]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="451" y="90" width="100" height="30" uuid="e21f3542-eb89-4fe7-a211-487c6af4f647"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement x="0" y="125" width="100" height="1" uuid="3b92fde5-f1b5-43e3-9347-eb2b4b922010"/>
+			</break>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="170" splitType="Stretch">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="50" uuid="c2caa32a-605e-4fc9-9d21-845407512a79">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="false"/>
+					<property name="net.sf.jasperreports.export.xlsx.ignore.cell.background" value="false"/>
+					<property name="net.sf.jasperreports.export.docx.ignore.cell.background" value="false"/>
+				</reportElement>
+				<subreportParameter name="targetId">
+					<subreportParameterExpression><![CDATA[$P{targetId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["ProfileCompetencySubReport.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="-20" y="70" width="595" height="41" uuid="3ff674f9-5d3e-4d4f-8e19-ea2d7b84e939">
+					<property name="net.sf.jasperreports.export.pdf.background.color" value="#FFFFFF"/>
+					<property name="net.sf.jasperreports.export.xls.background.color" value="#FFFFFF"/>
+				</reportElement>
+				<subreportParameter name="targetId">
+					<subreportParameterExpression><![CDATA[$P{targetId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["IndividualCompetencySubReport.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="-20" y="130" width="595" height="40" uuid="ebcaad4f-8ee1-4392-8d2f-4a5220226aad"/>
+				<subreportParameter name="targetId">
+					<subreportParameterExpression><![CDATA[$P{targetId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["ConclusionSubReport.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="60" width="90" height="1" uuid="d6b6c9bf-9350-49d7-9714-aee266315b4e"/>
+			</break>
+			<break>
+				<reportElement x="0" y="120" width="101" height="1" uuid="e5dda909-b774-4a57-88ec-ef5c8ba5bf4c"/>
+			</break>
+		</band>
+	</summary>
+</jasperReport>

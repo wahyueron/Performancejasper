@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.3.final using JasperReports Library version 6.20.3-415f9428cffdb6805c6f85bbb29ebaf18813a2ab  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ProfileCompetencySubReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="69744391-fd21-42c8-b6d0-a2ff49952f7c">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PerformanceResultAssessment.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="targetId" class="java.lang.String">
+		<parameterDescription><![CDATA[This is target Id for filtering]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 
+pata.id, cc.id competency_id, cc."name" competency_name, cc.description competency_description, 
+COALESCE(0,clrpd.rating_target), ccb.behaviour competency_behaviour, rating
+,(SELECT sum(rating) AS total_of_competency_by_position FROM ( 
+SELECT  
+pata.id,  
+cc.id competency_id, cc."name" competency_name, cc.description competency_description, 
+ccb.behaviour competency_behaviour, COALESCE(clrpd.rating_target,0) AS rating,cvse.job_title_id 
+FROM pat001.per_assessment_target_assessors pata  
+JOIN pat001.per_assessment_target_assessor_details patd ON pata.id = patd.target_assessor_id   
+JOIN pat001.cmp_competencies cc ON cc.id = patd.competency_id  
+JOIN pat001.cmp_competencies_behaviour ccb ON ccb.comp_id = cc.id  
+JOIN pat001.cor_v_simple_employees cvse ON cvse.id = pata.target_id  
+LEFT JOIN pat001.cmp_level_rate_positions clrp ON clrp.position_id = cvse.position_id  
+LEFT JOIN pat001.cmp_level_rate_position_details clrpd ON clrpd.level_rate_id = clrp.id AND cc.id = clrpd.competency_id  
+WHERE pata.target_id = $P{targetId} 
+AND pata.assess_status = 'Done' 
+) tr) AS total_of_competency_by_position,
+COALESCE( 
+(SELECT total_of_competency_assessment FROM( 
+SELECT 
+patd.id, COALESCE(sum(ccp.rating),0) total_of_competency_assessment 
+FROM pat001.per_assessment_target_assessors pata  
+JOIN pat001.per_assessment_target_assessor_details patd ON pata.id = patd.target_assessor_id 
+JOIN pat001.per_assessment_target_assessor_detail_answers patada ON patada.target_assessor_detail_id = patd.id 
+JOIN pat001.cmp_competencies_proficiency ccp ON ccp.id = patada.proficiency_id 
+WHERE pata.target_id = $P{targetId}
+AND pata.assess_status = 'Done' 
+GROUP BY patd.id 
+) toca) 
+,0) AS total_of_competency_assessment,
+COALESCE(rating_answer) rating_answer, desc_rating_answer, pata.assess_status,
+CASE 
+WHEN COALESCE(tr1.total_of_competency_position,0) = 0  THEN 0 
+ELSE (COALESCE(toca.total_of_competency_assessment,0) / COALESCE(tr1.total_of_competency_position,0)) * 100 
+END AS percentage  
+FROM pat001.per_assessment_target_assessors pata 
+JOIN pat001.per_assessment_target_assessor_details patd ON pata.id = patd.target_assessor_id  
+JOIN pat001.cmp_competencies cc ON cc.id = patd.competency_id  
+JOIN pat001.cmp_competencies_behaviour ccb ON ccb.comp_id = cc.id 
+LEFT JOIN (  
+SELECT behave_id,  
+json_agg(  
+json_build_object(  
+'rating', ccp.rating, 
+'description', ccp.item_desc 
+) 
+)::TEXT AS rating  
+FROM pat001.cmp_competencies_behaviour ccb 
+JOIN pat001.cmp_competencies_proficiency ccp ON ccp.behave_id = ccb.id 
+GROUP BY behave_id 
+) ccp_ccb ON ccp_ccb.behave_id = ccb.id 
+JOIN pat001.cor_v_simple_employees cvse ON cvse.id = pata.target_id 
+LEFT JOIN pat001.cmp_level_rate_positions clrp ON clrp.position_id = cvse.position_id  
+LEFT JOIN pat001.cmp_level_rate_position_details clrpd ON clrpd.level_rate_id = clrp.id AND cc.id = clrpd.competency_id  
+LEFT JOIN( 
+SELECT ccp.behave_id ,ccp.rating AS rating_answer, ccp.item_desc desc_rating_answer 
+FROM pat001.cmp_competencies_behaviour ccb  
+JOIN pat001.cmp_competencies_proficiency ccp ON ccp.behave_id = ccb.id  
+JOIN pat001.per_assessment_target_assessor_detail_answers patada ON patada.proficiency_id = ccp.id 
+JOIN pat001.per_assessment_target_assessor_details patad ON patad.id = patada.target_assessor_detail_id  
+JOIN pat001.per_assessment_target_assessors pata2 ON pata2.id = patad.target_assessor_id  
+WHERE pata2.target_id  = $P{targetId} 
+) ccb_ccp_patada ON ccb_ccp_patada.behave_id = ccb.id  
+LEFT JOIN ( 
+SELECT tr.pataid,sum(rating) AS total_of_competency_position FROM ( 
+SELECT  
+pata.id pataid,  
+cc.id competency_id, cc."name" competency_name, cc.description competency_description, 
+ccb.behaviour competency_behaviour, COALESCE(clrpd.rating_target,0) AS rating 
+FROM pat001.per_assessment_target_assessors pata  
+JOIN pat001.per_assessment_target_assessor_details patd ON pata.id = patd.target_assessor_id  
+JOIN pat001.cmp_competencies cc ON cc.id = patd.competency_id 
+JOIN pat001.cmp_competencies_behaviour ccb ON ccb.comp_id = cc.id  
+JOIN pat001.cor_v_simple_employees cvse ON cvse.id = pata.target_id  
+LEFT JOIN pat001.cmp_level_rate_positions clrp ON clrp.position_id = cvse.position_id  
+LEFT JOIN pat001.cmp_level_rate_position_details clrpd ON clrpd.level_rate_id = clrp.id AND cc.id = clrpd.competency_id  
+) tr GROUP BY pataid 
+) tr1 ON tr1.pataid = pata.id 
+LEFT JOIN ( 
+SELECT  
+pata.id pataid, COALESCE(sum(ccp.rating),0) total_of_competency_assessment 
+FROM pat001.per_assessment_target_assessors pata  
+JOIN pat001.per_assessment_target_assessor_details patd ON pata.id = patd.target_assessor_id 
+JOIN pat001.per_assessment_target_assessor_detail_answers patada ON patada.target_assessor_detail_id = patd.id 
+JOIN pat001.cmp_competencies_proficiency ccp ON ccp.id = patada.proficiency_id 
+GROUP BY pata.id 
+) toca ON toca.pataid = pata.id 
+WHERE pata.target_id = $P{targetId} 
+AND pata.assess_status = 'Done' ;]]>
+	</queryString>
+	<field name="id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="competency_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="competency_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="competency_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cmp_competencies"/>
+	</field>
+	<field name="competency_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="competency_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="competency_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cmp_competencies"/>
+	</field>
+	<field name="competency_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="competency_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="competency_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cmp_competencies"/>
+	</field>
+	<field name="coalesce" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="coalesce"/>
+		<property name="com.jaspersoft.studio.field.label" value="coalesce"/>
+	</field>
+	<field name="competency_behaviour" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="competency_behaviour"/>
+		<property name="com.jaspersoft.studio.field.label" value="competency_behaviour"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cmp_competencies_behaviour"/>
+	</field>
+	<field name="rating" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rating"/>
+		<property name="com.jaspersoft.studio.field.label" value="rating"/>
+	</field>
+	<field name="total_of_competency_by_position" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_of_competency_by_position"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_of_competency_by_position"/>
+	</field>
+	<field name="total_of_competency_assessment" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="total_of_competency_assessment"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_of_competency_assessment"/>
+	</field>
+	<field name="rating_answer" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="rating_answer"/>
+		<property name="com.jaspersoft.studio.field.label" value="rating_answer"/>
+	</field>
+	<field name="desc_rating_answer" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="desc_rating_answer"/>
+		<property name="com.jaspersoft.studio.field.label" value="desc_rating_answer"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cmp_competencies_proficiency"/>
+	</field>
+	<field name="assess_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assess_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="assess_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_target_assessors"/>
+	</field>
+	<field name="percentage" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="percentage"/>
+		<property name="com.jaspersoft.studio.field.label" value="percentage"/>
+	</field>
+	<background>
+		<band splitType="Stretch">
+			<property name="backgroundcolor" value="#FFFF00"/>
+			<printWhenExpression><![CDATA[false]]></printWhenExpression>
+		</band>
+	</background>
+	<title>
+		<band height="112" splitType="Stretch">
+			<image hAlign="Left">
+				<reportElement x="-10" y="-10" width="190" height="60" uuid="4a787193-899b-4138-8186-c879489fde7a"/>
+				<imageExpression><![CDATA["https://github.com/wahyueron/gambar/blob/main/PT_Famili_Mitra_Ekselen__FAME_Consultant___1_-removebg-preview.png?raw=true"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="165" y="71" width="240" height="41" forecolor="#5C7CE6" uuid="af21c240-f99a-4477-8f6b-d0a64b5a6ecb"/>
+				<textElement textAlignment="Center">
+					<font size="22" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[I.Profil Kompetensi]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="81" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="0" width="120" height="30" forecolor="#FFFFFF" backcolor="#0464B4" uuid="1d25c913-de28-493f-af6f-fa0a007dac1e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dc40bd05-5974-4ccb-b414-5091f9606d9e"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="10" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Core Competency]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="250" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#0464B4" uuid="5c86da00-5fc5-439f-bd09-b8412ae54af6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Level
+1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="130" y="0" width="120" height="30" forecolor="#FFFFFF" backcolor="#0464B4" uuid="ee2738bb-6a86-4524-94c7-569147291c85">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="72fff71d-aa03-41cb-a1fb-1b451249e7d3"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Rating target]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="10" y="30" width="120" height="30" forecolor="#030303" backcolor="#E0EEF8" uuid="729ea7eb-271e-4a09-95d0-2e757a93a553">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dc40bd05-5974-4ccb-b414-5091f9606d9e"/>
+				</reportElement>
+				<box leftPadding="10">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{competency_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="130" y="30" width="120" height="30" forecolor="#030303" backcolor="#E0EEF8" uuid="74a00585-9ad7-46f6-8a0d-baa7fa0ed36d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="72fff71d-aa03-41cb-a1fb-1b451249e7d3"/>
+				</reportElement>
+				<box leftPadding="10" rightPadding="10">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{desc_rating_answer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="250" y="30" width="60" height="30" forecolor="#030303" backcolor="#E0EEF8" uuid="a5501bb7-0cf0-4619-8949-d6dd4ec77d35">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rating_answer}== 1 ? "☑" : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="310" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#0464B4" uuid="d9c9ce78-2e98-4c4d-a4c2-ce610a04ea2d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Level
+2]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="310" y="30" width="60" height="30" forecolor="#030303" backcolor="#E0EEF8" uuid="c7780803-4fae-4067-a438-bc77b14d32ea">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rating_answer}== 2 ? "☑" : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="370" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#0464B4" uuid="48d9f318-039d-4649-929b-1dcceac7d749">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Level
+3]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="370" y="30" width="60" height="30" forecolor="#030303" backcolor="#E0EEF8" uuid="17037fa2-b2cb-40f8-9846-30234177376d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rating_answer}== 3 ? "☑" : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="430" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#0464B4" uuid="0297d8f4-91b8-40d5-a136-a073e370e364">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Level
+4]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="430" y="30" width="60" height="30" forecolor="#030303" backcolor="#E0EEF8" uuid="910e8d22-e513-4c7b-9b02-b519b7cf276b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rating_answer}== 4 ? "☑" : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="490" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#0464B4" uuid="5399c63b-1262-49ec-95ad-f7c0776a0916">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Level
+5]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="490" y="30" width="60" height="30" forecolor="#030303" backcolor="#E0EEF8" uuid="97ae1e02-d3fd-4471-9ad7-a03786cd03a5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4284eb18-d2ea-41f0-bf2d-58f132af00b8"/>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rating_answer}== 5 ? "☑" : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="100" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="280" y="40" width="270" height="30" backcolor="#E0EEF8" uuid="cb59276c-d772-4a1e-b446-2f885519e6e5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ec2e155d-d0d9-4b13-b17e-70ff68b7b370"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{total_of_competency_by_position}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="280" y="10" width="270" height="30" backcolor="#E0EEF8" uuid="8a2ab2c3-4f5b-40c9-9a91-24d10f43f7f1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="983e8412-6ab0-417b-890c-f1343be6b27c"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{total_of_competency_assessment}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="280" y="70" width="270" height="30" backcolor="#E0EEF8" uuid="62e6a9e9-90b8-4141-9c1b-0e6bbd34a40a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="64a1c40e-9593-4855-89a3-fdda46de2efd"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{percentage}.longValueExact() + "%"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="40" width="270" height="30" backcolor="#E0EEF8" uuid="b5e388bb-9dab-47cb-a253-09f706ea3034">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ec2e155d-d0d9-4b13-b17e-70ff68b7b370"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total Standar Kompentensi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="10" width="270" height="30" backcolor="#E0EEF8" uuid="d8683fae-4f10-45bc-a690-4fc4b19aa8f4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="983e8412-6ab0-417b-890c-f1343be6b27c"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total Pencapaian Kompetensi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="70" width="270" height="30" backcolor="#E0EEF8" uuid="66f44c7e-a70b-4e2a-b308-885cc5dc232b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="64a1c40e-9593-4855-89a3-fdda46de2efd"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Presentase Pemenuhan Kompetensi]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="210" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<staticText>
+				<reportElement x="395" y="120" width="140" height="14" uuid="000f88ba-a9d9-49b8-80e5-6f0568589244"/>
+				<text><![CDATA[Pemeriksa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="395" y="170" width="150" height="20" uuid="cef2f6f6-3c9a-429b-8b4b-4df40e14281d"/>
+				<text><![CDATA[Christina Anjar Astya, M. Psi., Psikolog]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+</jasperReport>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.3.final using JasperReports Library version 6.20.3-415f9428cffdb6805c6f85bbb29ebaf18813a2ab  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IndividualCompetencySubReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="41bc98ee-82a0-40bb-b9be-bd26c6076c18">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PerformanceResultAssessment.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="targetId" class="java.lang.String">
+		<parameterDescription><![CDATA[This is Target Id]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT paa.individual_desc 
+FROM pat001.per_assessment_answers paa 
+JOIN pat001.per_assessment_target_assessors pata2 ON paa.assessment_target_assessor_id =pata2.id 
+WHERE pata2.target_id = $P{targetId}]]>
+	</queryString>
+	<field name="individual_desc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="individual_desc"/>
+		<property name="com.jaspersoft.studio.field.label" value="individual_desc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="per_assessment_answers"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image hAlign="Left">
+				<reportElement x="-10" y="-10" width="190" height="50" uuid="e7a53031-de8e-41c7-a885-e316ff2b9756"/>
+				<imageExpression><![CDATA["https://github.com/wahyueron/gambar/blob/main/PT_Famili_Mitra_Ekselen__FAME_Consultant___1_-removebg-preview.png?raw=true"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="38" splitType="Stretch">
+			<staticText>
+				<reportElement x="170" y="-3" width="240" height="41" forecolor="#5C7CE6" uuid="8ccc885f-9b8a-4e61-888f-a21f8067766c"/>
+				<textElement textAlignment="Center" markup="html">
+					<font size="22" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[II.Uraian Individual]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="90">
+			<textField textAdjust="StretchHeight">
+				<reportElement stretchType="RelativeToBandHeight" x="22" y="5" width="510" height="40" uuid="6f34ceb3-a386-4468-b180-c786519cd9b4">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Justified" markup="html">
+					<font size="12"/>
+					<paragraph lineSpacing="1_1_2" lineSpacingSize="2.0" leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{individual_desc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="50"/>
+	</lastPageFooter>
+</jasperReport>
